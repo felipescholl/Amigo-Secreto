@@ -1,0 +1,65 @@
+var participantes = [];
+
+function adicionar() {
+  var addAmigo = document.getElementById('nome-amigo').value;
+  participantes.push(addAmigo); // Adicionar sem espaço extra no início
+
+  var campoIncluidos = document.getElementById('lista-amigos');
+  campoIncluidos.textContent = participantes.join(', '); // Exibir com vírgulas
+}
+
+function sortear() {
+  if (participantes.length < 2) {
+    alert("Adicione pelo menos dois amigos para realizar o sorteio!");
+    return;
+  }
+
+  let embaralhamentoValido = false;
+  let resultado = [];
+
+  while (!embaralhamentoValido) {
+    const participantesCopia = [...participantes];
+    resultado = [];
+
+    while (participantesCopia.length > 0) {
+      const indiceSorteado = Math.floor(Math.random() * participantesCopia.length);
+      const amigoSecreto = participantesCopia.splice(indiceSorteado, 1)[0];
+
+      if (amigoSecreto === participantes[resultado.length]) {
+        participantesCopia.push(amigoSecreto);
+        continue;
+      }
+
+      if (
+        resultado.length > 0 &&
+        resultado[resultado.length - 1] === amigoSecreto &&
+        participantes[indiceSorteado] === participantes[resultado.length - 1]
+      ) {
+        participantesCopia.push(amigoSecreto);
+        participantesCopia.push(participantes[indiceSorteado]);
+        continue;
+      }
+
+      resultado.push(amigoSecreto);
+    }
+
+    embaralhamentoValido = resultado.length === participantes.length;
+  }
+
+  // Exibir o resultado na div "prizeDraw__container"
+  const containerSorteio = document.querySelector('.prizeDraw__container');
+  containerSorteio.innerHTML = ''; // Limpar resultados anteriores
+
+  for (let i = 0; i < participantes.length; i++) {
+    const paragrafo = document.createElement('p');
+    paragrafo.textContent = `${participantes[i]} -> ${resultado[i]}`;
+    containerSorteio.appendChild(paragrafo);
+  }
+}
+
+function reiniciar() {
+    participantes = [];
+    document.getElementById('lista-amigos').textContent = '';
+    document.querySelector('.prizeDraw__container').innerHTML = '';
+    document.getElementById('nome-amigo').value = ''; 
+}
